@@ -107,7 +107,7 @@ if __name__ == "__main__":
     mapping = {citizen_ids[i]: i for i in range(len(citizen_ids))}
     all_data['Id'] = all_data['Id'].replace(to_replace=mapping)
 
-    # Make a timeseries version
+    # Arrange columns and concert types
     lbl_cols = ['Id', 'Time', 'Period', 'Weeks', 'Observed']
     df_ts = all_data[lbl_cols + list(all_data.columns.drop(lbl_cols))]
     df_ts = df_ts.convert_dtypes()
