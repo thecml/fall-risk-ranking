@@ -4,7 +4,13 @@ authors:
 - family-names: "Lillelund"
   given-names: "Christian Marius"
   orcid: "https://orcid.org/0000-0002-2520-3774"
-title: "fall-risk-assessment"
+- family-names: Harbo
+  given-names: Michael
+  orcid: https://orcid.org/0000-0003-4738-9597
+- family-names: Pedersen
+  given-names: Christian Fischer
+  orcid: https://orcid.org/0000-0002-1266-5857
+title: "Code repository for paper "Fall Risk Assessment by Survival Analysis using Home Care Observations and Personal Alarms""
 version: 1.0.0
 doi: 10.5281/zenodo.1234
 date-released: 2023-05-02
