@@ -1,0 +1,29 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Python source code
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Christian Marius
+    family-names: Lillelund
+    email: cl@ece.au.dk
+    orcid: 'https://orcid.org/0000-0002-2520-3774'
+    affiliation: Aarhus University
+  - given-names: Michael
+    family-names: Harbo
+    email: michael@digirehab.dk
+    affiliation: DigiRehab A/S
+    orcid: 'https://orcid.org/0000-0003-4738-9597'
+  - given-names: Christian Fischer
+    family-names: Pedersen
+    email: cfp@ece.au.dk
+    affiliation: Aarhus University
+    orcid: 'https://orcid.org/0000-0002-1266-5857'
+repository-code: 'https://github.com/thecml/fall-risk-assessment'
+license: MIT
+version: 1.0.0
+date-released: '2023-05-02'
