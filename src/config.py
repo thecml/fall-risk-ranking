@@ -2,6 +2,25 @@
 This file has all configurations for doing the data preprocessing and all the relevant locations to read / write from.
 """
 
+from pathlib import Path
+
+# Directories
+ROOT_DIR = Path(__file__).absolute().parent.parent
+RAW_DATA_DIR = Path.joinpath(ROOT_DIR, "data/raw")
+RAW_TEST_DATA_DIR = Path.joinpath(ROOT_DIR, "data/raw/test")
+INTERIM_DATA_DIR = Path.joinpath(ROOT_DIR, 'data/interim')
+PROCESSED_DATA_DIR = Path.joinpath(ROOT_DIR, 'data/processed')
+MODELS_DIR = Path.joinpath(ROOT_DIR, 'models')
+REFERENCES_DIR = Path.joinpath(ROOT_DIR, 'references')
+REPORTS_DIR = Path.joinpath(ROOT_DIR, 'reports')
+CONFIGS_DIR = Path.joinpath(ROOT_DIR, 'configs')
+
+FILENAMES_HC_RAW = {'HC1': 'HC1.csv',
+                    'HC2': 'HC2.csv',
+                    'HC3': 'HC3.csv'}
+FILENAMES_OTHER_RAW = {'ATS': 'ATS_DATA.csv'}
+FILENAMES_REF = {'iso_classes': 'isoall.txt'}
+
 PARAMS_CPH = {
     'alpha': 0.1,
     'ties': 'breslow',

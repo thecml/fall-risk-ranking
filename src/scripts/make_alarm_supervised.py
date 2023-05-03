@@ -18,8 +18,8 @@ if __name__ == "__main__":
     label_cols = ['Id', 'Time', 'Period', 'Weeks', 'Observed']
     hc_cols  = list(df.columns.drop(label_cols + ['BirthYear', 'Gender']))
 
-    # Only include citizens which initial hc is over 200
-    obs_mask = df.groupby('Id').first()[hc_cols].sum(axis=1) > 200
+    # Only include citizens which initial hc is over 250
+    obs_mask = df.groupby('Id').first()[hc_cols].sum(axis=1) > 250
     pos_citizens = list(obs_mask[obs_mask].index)
     df = df[df['Id'].isin(pos_citizens)].reset_index(drop=True)
 

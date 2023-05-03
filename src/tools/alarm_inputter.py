@@ -1,7 +1,35 @@
 import pandas as pd
 import numpy as np
 
-def make_hc_features(df: pd.DataFrame, citizen_idx_map: dict,
+def get_ats(row, ats):
+    citizen_ats = ats.loc[(ats['CitizenId'] == row['RealId']) & \
+            (ats['LendDate'].dt.date <= row['RealDate'])]
+    citizen_ats = citizen_ats.sort_values(by='LendDate')
+    ats_seq = ','.join([str(elem) for elem in citizen_ats['DevISOClass']])
+    if not ats_seq:
+        return '0'
+    return ats_seq
+
+def get_loan_period(row, ats):
+    citizen_ats = ats.loc[(ats['CitizenId'] == row['RealId']) & \
+            (ats['LendDate'].dt.date <= row['RealDate'])]
+    if citizen_ats.empty != True:
+        lend_diff = citizen_ats['LendDate'] - citizen_ats['ReturnDate']
+        loan_period = abs(lend_diff.mean()).days
+        return loan_period
+    return 0
+
+def get_number_ats(row, ats):
+    citizen_ats = ats.loc[(ats['CitizenId'] == row['RealId']) & \
+                (ats['LendDate'].dt.date <= row['RealDate'])]
+    return len(citizen_ats)
+
+def get_number_fall(row, falls):
+    citizen_falls = falls.loc[(falls['CitizenId'] == row['RealId']) & \
+            (falls['FallDate'].dt.date <= row['RealDate'])]
+    return len(citizen_falls)
+
+def get_hc_features(df: pd.DataFrame, citizen_idx_map: dict,
                      dates: np.ndarray, date_dict: dict, care_dict: dict) -> np.ndarray:
     """
     Encodes all observations for a single person to a sequence of variables containing

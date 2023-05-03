@@ -5,7 +5,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
     version='1.0.0',
-    description='FallRiskRanking',
+    description='Python source code',
     author='Christian Marius Lillelund',
     author_email='cl@ece.au.dk',
     license='MIT',

@@ -1,6 +1,26 @@
 import numpy as np
 import pandas as pd
 
+def get_falls(data, citizen_ids, date_dict):
+    falls = np.zeros(len(citizen_ids))
+    for i, citizen_id in enumerate(citizen_ids):
+        citizen_fall = np.where(data == citizen_id)[0]
+        if citizen_fall.size == 0:
+            falls[i] = np.inf
+        else:
+            idx = citizen_fall[0]
+            year, week = data[idx][1], data[idx][2]
+            if year == '' or week == '':
+                falls[i] = np.inf
+            else:
+                key = (int(year), int(week))
+                if key in date_dict:
+                    ts = date_dict[(int(year), int(week))]
+                    falls[i] = ts
+                else:
+                    falls[i] = np.inf
+    return falls
+
 def get_alarms(data, citizen_ids, date_dict):
     alarms = np.zeros(len(citizen_ids))
     for i, citizen_id in enumerate(citizen_ids):

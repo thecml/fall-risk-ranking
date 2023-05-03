@@ -6,6 +6,7 @@ from sksurv.ensemble import GradientBoostingSurvivalAnalysis
 import config as cfg
 from lifelines import WeibullAFTFitter
 from lifelines.utils.sklearn_adapter import sklearn_adapter
+import numpy as np
 
 class BaseRegressor(ABC):
     """
@@ -39,7 +40,7 @@ class BaseRegressor(ABC):
     def get_estimator(self, params=None):
         return self.make_model(params)
 
-class Cph(BaseRegressor):
+class CPH(BaseRegressor):
     def make_model(self, params=None):
         model_params = cfg.PARAMS_CPH
         if params:
@@ -51,9 +52,9 @@ class Cph(BaseRegressor):
             'tol': [1e-1, 1e-5, 1e-9]
         }
     def get_best_hyperparams(self):
-        return {'tol': 0.1, 'n_iter': 50}
+        return {'tol': 1e-5, 'n_iter': 50}
 
-class CphRidge(BaseRegressor):
+class CPHRidge(BaseRegressor):
     def make_model(self, params=None):
         model_params = cfg.PARAMS_CPH_RIDGE
         if params:
@@ -65,9 +66,9 @@ class CphRidge(BaseRegressor):
             'tol': [1e-1, 1e-5, 1e-9]
         }
     def get_best_hyperparams(self):
-        return {'tol': 0.1, 'n_iter': 50}
+        return {'tol': 1e-05, 'n_iter': 50}
 
-class CphLasso(BaseRegressor):
+class CPHLasso(BaseRegressor):
     def make_model(self, params=None):
         model_params = cfg.PARAMS_CPH_LASSO
         if params:
@@ -84,7 +85,7 @@ class CphLasso(BaseRegressor):
         return {'tol': 1e-05, 'normalize': True,
                 'n_alphas': 10, 'max_iter': 100000}
 
-class CphElastic(BaseRegressor):
+class CPHElastic(BaseRegressor):
     def make_model(self, params=None):
         model_params = cfg.PARAMS_CPH_ELASTIC
         if params:
@@ -109,14 +110,14 @@ class RSF(BaseRegressor):
         return RandomSurvivalForest(**model_params)
     def get_hyperparams(self):
         return {
-            'max_depth': [1, 2, 3],
+            'max_depth': [3, 5, 7],
             'n_estimators': [25, 50, 75, 100, 200],
-            'min_samples_split': [200, 400, 800],
-            'min_samples_leaf': [100, 200, 400]
+            'min_samples_split': [int(x) for x in np.linspace(1, 200, 10, endpoint=True)],
+            'min_samples_leaf': [int(x) for x in np.linspace(1, 200, 10, endpoint=True)]
         }
     def get_best_hyperparams(self):
-        return  {'n_estimators': 100, 'min_samples_split': 400,
-                 'min_samples_leaf': 200, 'max_depth': 3}
+        return  {'n_estimators': 100, 'min_samples_split': 133,
+                 'min_samples_leaf': 1, 'max_depth': 7}
 
 class CoxBoost(BaseRegressor):
     def make_model(self, params=None):
@@ -126,15 +127,15 @@ class CoxBoost(BaseRegressor):
         return GradientBoostingSurvivalAnalysis(**model_params)
     def get_hyperparams(self):
         return {
-            'max_depth': [1, 2, 3],
+            'max_depth': [3, 5, 7],
             'n_estimators': [25, 50, 75, 100, 200],
             'learning_rate': [0.01, 0.05, 0.1],
-            'min_samples_split': [200, 400, 800],
-            'min_samples_leaf': [100, 200, 400]
+            'min_samples_split': [int(x) for x in np.linspace(1, 200, 10, endpoint=True)],
+            'min_samples_leaf': [int(x) for x in np.linspace(1, 200, 10, endpoint=True)]
         }
     def get_best_hyperparams(self):
-        return {'n_estimators': 25, 'min_samples_split': 400,
-                'min_samples_leaf': 100, 'max_depth': 3,
+        return {'n_estimators': 200, 'min_samples_split': 200,
+                'min_samples_leaf': 23, 'max_depth': 7,
                 'learning_rate': 0.05}
 
 class XGBLinear(BaseRegressor):
@@ -162,7 +163,7 @@ class XGBTree(BaseRegressor):
 
     def get_hyperparams(self):
         return {
-            'max_depth': [1, 2, 3],
+            'max_depth': [3, 5, 7],
             'n_estimators': [25, 50, 75, 100, 200],
             'learning_rate': [0.01, 0.05, 0.1],
             'min_child_weight': [1, 5, 10, 25, 50],
@@ -182,7 +183,7 @@ class XGBDart(BaseRegressor):
         return xgb.XGBRegressor(**model_params)
     def get_hyperparams(self):
         return {
-            'max_depth': [1, 2, 3],
+            'max_depth': [3, 5, 7],
             'n_estimators': [25, 50, 75, 100, 200],
             'learning_rate': [0.01, 0.05, 0.1],
             'min_child_weight': [1, 5, 10, 25, 50],

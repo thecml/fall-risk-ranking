@@ -4,7 +4,7 @@ import numpy as np
 from sksurv.linear_model import CoxPHSurvivalAnalysis
 from sklearn.feature_selection import VarianceThreshold, SelectKBest
 from sklearn.feature_selection import SequentialFeatureSelector
-from mrmr import mrmr_regression
+from mrmr import mrmr_regression, mrmr_classif
 from utility.rfe_pi import RFE_PI
 
 class SelectAllFeatures():
@@ -54,6 +54,22 @@ class LowVar(BaseFeatureSelector):
     def make_model(self):
         return VarianceThreshold(threshold=0.5)
 
+class SelectKBest5Clf(BaseFeatureSelector):
+    def make_model(self):
+        return SelectKBest(k=5)
+
+class SelectKBest10Clf(BaseFeatureSelector):
+    def make_model(self):
+        return SelectKBest(k=10)
+
+class SelectKBest20Clf(BaseFeatureSelector):
+    def make_model(self):
+        return SelectKBest(k=20)
+
+class SelectKBest5(BaseFeatureSelector):
+    def make_model(self):
+        return SelectKBest(fit_and_score_features, k=5)
+
 class SelectKBest10(BaseFeatureSelector):
     def make_model(self):
         return SelectKBest(fit_and_score_features, k=10)
@@ -62,6 +78,10 @@ class SelectKBest20(BaseFeatureSelector):
     def make_model(self):
         return SelectKBest(fit_and_score_features, k=20)
 
+class RFE5(BaseFeatureSelector):
+    def make_model(self):
+        return RFE_PI(self.estimator, n_features_to_select=5, step=0.5)
+
 class RFE10(BaseFeatureSelector):
     def make_model(self):
         return RFE_PI(self.estimator, n_features_to_select=10, step=0.5)
@@ -69,6 +89,13 @@ class RFE10(BaseFeatureSelector):
 class RFE20(BaseFeatureSelector):
     def make_model(self):
         return RFE_PI(self.estimator, n_features_to_select=20, step=0.5)
+
+class SFS5(BaseFeatureSelector):
+    def make_model(self):
+        return SequentialFeatureSelector(self.estimator, n_features_to_select=5,
+                                         n_jobs=5,
+                                         scoring=fit_and_score_features,
+                                         direction="forward")
 
 class SFS10(BaseFeatureSelector):
     def make_model(self):
@@ -84,6 +111,12 @@ class SFS20(BaseFeatureSelector):
                                          scoring=fit_and_score_features,
                                          direction="forward")
 
+class RegMRMR5(BaseFeatureSelector):
+    def make_model(self):
+        return mrmr_regression(X=self.X, y=self.y, K=5, show_progress=False)
+    def get_features(self):
+        return self.make_model()
+
 class RegMRMR10(BaseFeatureSelector):
     def make_model(self):
         return mrmr_regression(X=self.X, y=self.y, K=10, show_progress=False)
@@ -93,5 +126,23 @@ class RegMRMR10(BaseFeatureSelector):
 class RegMRMR20(BaseFeatureSelector):
     def make_model(self):
         return mrmr_regression(X=self.X, y=self.y, K=20, show_progress=False)
+    def get_features(self):
+        return self.make_model()
+
+class ClfMRMR5(BaseFeatureSelector):
+    def make_model(self):
+        return mrmr_classif(X=self.X, y=self.y, K=5, show_progress=False)
+    def get_features(self):
+        return self.make_model()
+
+class ClfMRMR10(BaseFeatureSelector):
+    def make_model(self):
+        return mrmr_classif(X=self.X, y=self.y, K=10, show_progress=False)
+    def get_features(self):
+        return self.make_model()
+
+class ClfMRMR20(BaseFeatureSelector):
+    def make_model(self):
+        return mrmr_classif(X=self.X, y=self.y, K=20, show_progress=False)
     def get_features(self):
         return self.make_model()

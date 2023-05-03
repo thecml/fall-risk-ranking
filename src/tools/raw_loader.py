@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from utility.data import fix_hc_data_types
 
 class RawLoader:
     """
@@ -12,6 +11,11 @@ class RawLoader:
 
     def __init__(self):
         pass
+
+    def load_iso_classes(self, filename, path) -> pd.DataFrame:
+        return pd.read_csv(Path.joinpath(path, filename), usecols=[0, 1, 2],
+                           names=['DevISOClass', 'GroupSize', 'Description'],
+                           encoding='iso-8859-10', converters={'DevISOClass': str})
 
     def load_assistive_aids(self, filename, path) -> pd.DataFrame:
         """
@@ -60,16 +64,17 @@ class RawLoader:
         :param filename: The name of the file with the data
         :return: A panda dataframe
         """
-        X = pd.DataFrame()
+        total_hc = pd.DataFrame()
         for filename in filenames:
-            if filename == "Hjemmehjælpdata aug 2022.csv":
-                encoding = 'iso-8859-10'
-            else:
-                encoding = None
-            if filename == "Hjemmehjælpdata aug 2022.csv" or filename == 'Hjemmehjælpdata dec 2020.csv':
                 converters = {'Personnummer': str}
-                df = pd.read_csv(Path.joinpath(path, filename), encoding=encoding,
-                                 converters=converters, skiprows=2)
+                if filename == 'HC2.csv' or filename == 'HC3.csv':
+                    encoding = 'latin-1'
+                else:
+                    encoding = None
+                df = pd.read_csv(Path.joinpath(path, filename),
+                                 encoding=encoding,
+                                 converters=converters,
+                                 skiprows=2)
                 df = df[df['Personnummer'].str.len() == 11] # remove empty/whitespace strings
 
                 # Convert PN to CitizenId
@@ -90,28 +95,8 @@ class RawLoader:
 
                 # Fix year, convert types
                 df['Year'] = [int(x.split('-')[0]) for x in df.Year]
-                df = fix_hc_data_types(df)
                 df = df[['CitizenId', 'Gender', 'BirthYear', 'Year', 'Week',
                          'Minutes', 'NumCares', 'CareType']]
 
-                X = pd.concat([X, df], ignore_index=True)
-            else:
-                converters = {'BorgerID': str}
-                hc = pd.read_csv(Path.joinpath(path, filename),
-                                 converters=converters,
-                                 sep=";",
-                                 encoding='latin-1')
-                hc = hc.dropna(axis=0)
-                hc = hc.rename(columns={'År': 'Year', 'Kalender Uge Nr': 'Week',
-                                        'Ydelse' : 'CareType', 'Leveret Tid (min)': 'Minutes',
-                                        'Antal leverede ydelser': 'NumCares',
-                                        'Køn': 'Gender', 'BorgerID': 'CitizenId',
-                                        'Født': 'BirthYear'})
-
-                # Fix year, convert types
-                hc = fix_hc_data_types(hc)
-                hc = hc[['CitizenId', 'Gender', 'BirthYear', 'Year', 'Week',
-                         'Minutes', 'NumCares', 'CareType']]
-
-                X = pd.concat([X, hc], ignore_index=True)
-        return X
+                total_hc = pd.concat([total_hc, df], ignore_index=True)
+        return total_hc
